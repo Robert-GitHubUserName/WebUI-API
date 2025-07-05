@@ -50,7 +50,7 @@ def setup_flux_model():
     Sends a POST request to the /sdapi/v1/options endpoint.
     """
     checkpoint_name = f"{paths['model_filename']} [{paths['model_hash']}]"
-    print("\n🔄 Setting up the Flux model via API...")
+    print("\nSetting up the Flux model via API...")
     payload = {
         "sd_model_checkpoint": checkpoint_name,
         "sd_vae": paths["vae"],
@@ -61,8 +61,8 @@ def setup_flux_model():
     }
     response = requests.post(f"{url}/sdapi/v1/options", json=payload)
     response.raise_for_status()
-    print(f"✅ Flux model set to: {checkpoint_name}")
-    print("⏳ Waiting for model to load into memory (20 seconds)...")
+    print(f"Flux model set to: {checkpoint_name}")
+    print("Waiting for model to load into memory (20 seconds)...")
     time.sleep(20)  # Wait for the model to load
 
 def generate_image(prompt, seed=-1, width=896, height=1152, output_dir=".", steps=20):
@@ -76,12 +76,11 @@ def generate_image(prompt, seed=-1, width=896, height=1152, output_dir=".", step
         output_dir (str): Directory to save the output image.
         steps (int): Number of inference steps.
     """
-    print("\n🖼️ Generating image...")
+    print("\nGenerating image...")
     scheduler_type = "Simple"  # Scheduler name is case-sensitive
-    print(f"⚙️ Using Scheduler: {scheduler_type} (casing matters!)")
+    print(f"Using Scheduler: {scheduler_type} (casing matters!)")
     payload = {
         "prompt": prompt,
-        "negative_prompt": "blurry, dark, low quality",
         "steps": steps,
         "sampler_name": "Euler",
         "cfg_scale": 1.0,
@@ -96,7 +95,7 @@ def generate_image(prompt, seed=-1, width=896, height=1152, output_dir=".", step
         "override_settings_restore_afterwards": False,
         "seed": seed
     }
-    print(f"⚙️ Payload: {json.dumps(payload, indent=2)}")
+    print(f"Payload: {json.dumps(payload, indent=2)}")
     response = requests.post(f"{url}/sdapi/v1/txt2img", json=payload)
     response.raise_for_status()
     result = response.json()
@@ -107,7 +106,7 @@ def generate_image(prompt, seed=-1, width=896, height=1152, output_dir=".", step
     filepath = os.path.join(output_dir, filename)
     with open(filepath, "wb") as f:
         f.write(img_data)
-    print(f"✅ Image saved to disk: {filepath}")
+    print(f"Image saved to disk: {filepath}")
     # Save prompt and metadata to a text file alongside the image
     meta_filename = os.path.splitext(filename)[0] + "_meta.txt"
     meta_filepath = os.path.join(output_dir, meta_filename)
@@ -133,25 +132,25 @@ def generate_image(prompt, seed=-1, width=896, height=1152, output_dir=".", step
                     meta_file.write(str(info) + "\n")
             except Exception as e:
                 meta_file.write(f"Failed to parse infotext: {str(e)}\n")
-    print(f"📝 Metadata saved to: {meta_filepath}")
+    print(f"Metadata saved to: {meta_filepath}")
     # Display infotext metadata returned from the API
     if "info" in result:
         try:
             info = result["info"]
-            print("\n📋 Generation Info (raw):")
+            print("\nGeneration Info (raw):")
             print(info)
             if isinstance(info, str):
                 metadata = json.loads(info)
-                print("\n📊 Parsed Metadata:")
+                print("\nParsed Metadata:")
                 for key, value in metadata.items():
                     print(f"- {key}: {value}")
             else:
-                print("ℹ️ Info object was not a string.")
+                print("Info object was not a string.")
         except Exception as e:
-            print(f"⚠️ Failed to parse infotext: {str(e)}")
+            print(f"Failed to parse infotext: {str(e)}")
 
 if __name__ == "__main__":
-    print("🚀 Flux Generation Script Started")
+    print("Flux Generation Script Started")
     import argparse
     parser = argparse.ArgumentParser(description="Generate an image with the Flux model and optional output directory.")
     parser.add_argument('--prompt', required=True, help="Prompt for image generation (named argument)")

@@ -21,14 +21,14 @@ def setup_realistic_model():
     Configure the Forge WebUI to use the specified Realistic Photo model.
     Sends a POST request to the /sdapi/v1/options endpoint.
     """
-    print(f"\n🔄 Setting up the Realistic Photo model via API...")
+    print(f"\nSetting up the Realistic Photo model via API...")
     payload = {
         "sd_model_checkpoint": model_name
     }
     response = requests.post(f"{url}/sdapi/v1/options", json=payload)
     response.raise_for_status()
-    print(f"✅ Model set to: {model_name}")
-    print("⏳ Waiting for model to load into memory (5 seconds)...")
+    print(f"Model set to: {model_name}")
+    print("Waiting for model to load into memory (5 seconds)...")
     time.sleep(5)  # Wait for the model to load
 
 def generate_image(prompt, negative_prompt=None, seed=42, width=512, height=512, output_dir=".", steps=20):
@@ -43,7 +43,7 @@ def generate_image(prompt, negative_prompt=None, seed=42, width=512, height=512,
         output_dir (str): Directory to save the output image.
         steps (int): Number of inference steps.
     """
-    print("\n🖼️ Generating image...")
+    print("\nGenerating image...")
     payload = {
         "prompt": prompt,
         "steps": steps,
@@ -55,7 +55,7 @@ def generate_image(prompt, negative_prompt=None, seed=42, width=512, height=512,
     }
     if negative_prompt:
         payload["negative_prompt"] = negative_prompt
-    print(f"⚙️ Payload: {json.dumps(payload, indent=2)}")
+    print(f"Payload: {json.dumps(payload, indent=2)}")
     response = requests.post(f"{url}/sdapi/v1/txt2img", json=payload)
     response.raise_for_status()
     result = response.json()
@@ -66,7 +66,7 @@ def generate_image(prompt, negative_prompt=None, seed=42, width=512, height=512,
     filepath = os.path.join(output_dir, filename)
     with open(filepath, "wb") as f:
         f.write(img_data)
-    print(f"✅ Image saved to disk: {filepath}")
+    print(f"Image saved to disk: {filepath}")
     # Save prompt and metadata to a text file alongside the image
     meta_filename = os.path.splitext(filename)[0] + "_meta.txt"
     meta_filepath = os.path.join(output_dir, meta_filename)
@@ -90,25 +90,25 @@ def generate_image(prompt, negative_prompt=None, seed=42, width=512, height=512,
                     meta_file.write(str(info) + "\n")
             except Exception as e:
                 meta_file.write(f"Failed to parse infotext: {str(e)}\n")
-    print(f"📝 Metadata saved to: {meta_filepath}")
+    print(f"Metadata saved to: {meta_filepath}")
     # Display infotext metadata returned from the API
     if "info" in result:
         try:
             info = result["info"]
-            print("\n📋 Generation Info (raw):")
+            print("\nGeneration Info (raw):")
             print(info)
             if isinstance(info, str):
                 metadata = json.loads(info)
-                print("\n📊 Parsed Metadata:")
+                print("\nParsed Metadata:")
                 for key, value in metadata.items():
                     print(f"- {key}: {value}")
             else:
-                print("ℹ️ Info object was not a string.")
+                print("Info object was not a string.")
         except Exception as e:
-            print(f"⚠️ Failed to parse infotext: {str(e)}")
+            print(f"Failed to parse infotext: {str(e)}")
 
 if __name__ == "__main__":
-    print("🚀 Realistic Photo Generation Script Started")
+    print("Realistic Photo Generation Script Started")
     import argparse
     parser = argparse.ArgumentParser(description="Generate a realistic photo with optional negative prompt and output directory.")
     parser.add_argument('--prompt', required=True, help="Prompt for image generation (named argument)")

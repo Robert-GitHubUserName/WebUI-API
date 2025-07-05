@@ -13,7 +13,10 @@ ENV/
 .env
 
 # Output images and metadata
-output_images/
+output_images/*
+!output_images/.gitkeep
+task_logs/*
+!task_logs/.gitkeep
 *.png
 *_meta.txt
 
